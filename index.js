@@ -22,29 +22,27 @@ module.exports = function (opts) {
 
         try {
 
-            var ITEMS = {};
+            var property = "gulp-mergejs-" + opts.property;
 
-            var script = [
+            this[property] = {};
 
-                "var window = {};",
+            var oldMerge = this.merge;
 
-                "%fn = function (items) {".replace("%fn", opts.fn),
+            this.merge = function (context, key, items) {
 
-                "    _.extend(ITEMS, items);",
+                _.extend(context[property], items);
 
-                "};",
+            };
 
-                String(file.contents)
+            eval(String(file.contents));
 
-            ].join("\n");
-
-            eval(script);
+            this.merge = oldMerge;
 
             file.contents = new Buffer([
 
-                "%fn(%items);".replace("%fn", opts.fn)
+                "this.merge(this, \"%property\", %items);".replace("%property", opts.property)
 
-                              .replace("%items", stringify(ITEMS, { space: 4 })),
+                                                          .replace("%items", stringify(this[property], { space: 4 })),
 
                 ""
 
