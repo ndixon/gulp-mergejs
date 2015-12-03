@@ -1,7 +1,7 @@
 {
     "name": "gulp-mergejs",
     "description": "gulp-mergejs",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "homepage": "https://github.com/ndixon/gulp-mergejs",
     "author": {
         "name": "ndixon"
@@ -19,9 +19,10 @@
     }],
     "main": "./index.js",
     "dependencies": {
-        "async": "^1.4.2",
         "gulp-util": "^3.0.6",
-        "through2": "^2.0.0"
+        "json-stable-stringify": "^1.0.0",
+        "through2": "^2.0.0",
+        "underscore": "^1.8.3"
     },
     "keywords": [
         "gulpplugin",

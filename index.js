@@ -1,16 +1,14 @@
 "use strict";
 
-var async = require("async");
-
-var fs = require("fs");
+var _ = require("underscore");
 
 var gutil = require("gulp-util");
 
-var path = require("path");
+var stringify = require("json-stable-stringify");
 
 var through = require("through2");
 
-module.exports = function () {
+module.exports = function (opts) {
 
     return through.obj(function (file, enc, cb) {
 
@@ -24,7 +22,37 @@ module.exports = function () {
 
         try {
 
-            // code...
+            var ITEMS = {};
+
+            var script = [
+
+                "var window = {};",
+
+                "%fn = function (items) {".replace("%fn", opts.fn),
+
+                "    _.extend(ITEMS, items);",
+
+                "};",
+
+                String(file.contents)
+
+            ].join("\n");
+
+            eval(script);
+
+            file.contents = new Buffer([
+
+                "%fn(%items);".replace("%fn", opts.fn)
+
+                              .replace("%items", stringify(ITEMS, { space: 4 })),
+
+                ""
+
+            ].join("\n"));
+
+            this.push(file);
+
+            cb();
 
         } catch(err) {
 
